@@ -34,6 +34,24 @@ export async function fetchEvents({ signal, searchTerm }) {
   return events;
 }
 
+// fetchEvents는 홈에서 모든 이벤트를 출력하기 위함
+// fetchEvent는 이벤트 상세정보를 출력하기 위함
+export async function fetchEvent({ id, signal }) {
+  const response = await fetch(`http://localhost:3000/events/${id}`, {
+    signal: signal,
+  });
+
+  if (!response.ok) {
+    const error = new Error('An error occurred while fetching the event');
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  const { event } = await response.json();
+  return event;
+}
+
 export async function createNewEvent(eventData) {
   const response = await fetch('http://localhost:3000/events', {
     method: 'POST',
@@ -70,24 +88,6 @@ export async function fetchSelectableImages({ signal }) {
   return images;
 }
 
-// fetchEvents는 홈에서 모든 이벤트를 출력하기 위함
-// fetchEvent는 이벤트 상세정보를 출력하기 위함
-export async function fetchEvent({ id, signal }) {
-  const response = await fetch(`http://localhost:3000/events/${id}`, {
-    signal: signal,
-  });
-
-  if (!response.ok) {
-    const error = new Error('An error occurred while fetching the event');
-    error.code = response.status;
-    error.info = await response.json();
-    throw error;
-  }
-
-  const { event } = await response.json();
-  return event;
-}
-
 export async function deleteEvent({ id }) {
   const response = await fetch(`http://localhost:3000/events/${id}`, {
     method: 'DELETE',
@@ -95,6 +95,25 @@ export async function deleteEvent({ id }) {
 
   if (!response.ok) {
     const error = new Error('An error occurred while deleting the event');
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  return response.json();
+}
+
+export async function updateEvent({ id, event }) {
+  const response = await fetch(`http://localhost:3000/events/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ event }),
+  });
+
+  if (!response.ok) {
+    const error = new Error('An error occured while updating the event');
     error.code = response.status;
     error.info = await response.json();
     throw error;
