@@ -16,6 +16,8 @@ export default function NewEventsSection() {
   queryFn : 
     요청 시, 실행할 코드를 정의함. 
     값으로 Promise를 반환하는 함수를 넣어야 함. (async ~ await fetch~)
+    queryKey :
+      리액트 쿼리가 signal, queryKey를 전해준다.
   
   staleTime :
     데이터가 stale 상태로 간주되는 기간을 지정함
@@ -34,8 +36,9 @@ export default function NewEventsSection() {
   error = isError가 true일 경우, 해당 오류에 대한 정보가 포함되어 있음. 
   */
   const { data, isPending, isError, error } = useQuery({
-    queryKey: ['events'],
-    queryFn: fetchEvents,
+    queryKey: ['events', { max: 3 }],
+    queryFn: ({ signal, queryKey }) =>
+      fetchEvents({ signal: signal, ...queryKey[1] }), // ...queryKey = { max: 3 }에 해당함.
     // staleTime:
     // gcTime:
   });

@@ -12,12 +12,21 @@ useQuery에서 queryFn으로 아래 함수를 지정하면, useQuery는 지정�
     요청 취소 여부 (사용자가 요청 페이지를 벗어나면 리액트는 자동으로 요청을 취소함.)
     자동으로 요청 취소를 위해서는 fetch에 2번째 매개변수로 {signal:signal} 지정해야 함.
 
-*/
-export async function fetchEvents({ signal, searchTerm }) {
-  let url = 'http://localhost:3000/events';
+  max :
+    backend
 
-  if (searchTerm) {
+  최종적으로 fetchEvents의 url의 경우 
+  fetchEvents를 호출할 때, searchTerm과 max가 각각 존재하는 지 여부에 따라서 url의 값이 바뀌게 된다.
+*/
+export async function fetchEvents({ signal, searchTerm, max }) {
+  let url = 'http://localhost:3000/events'; // searchTerm, max
+
+  if (searchTerm && max) {
+    url += '?search=' + searchTerm + '&max=' + max;
+  } else if (searchTerm) {
     url += '?search=' + searchTerm;
+  } else if (max) {
+    url += '?max=' + max;
   }
 
   const response = await fetch(url, { signal: signal });

@@ -25,6 +25,10 @@ export default function FindEventSection() {
     useQuery에서 받는 signal로 요청을 취소할 때 사용한다.
     fetchEvents 내부에서 fetch 2번째 매개변수로 {signal: signal}로 설정하면 된다.
 
+  queryFn의 queryKey :
+    리액트 쿼리에서 queryKey 값을 queryFn으로 자동으로 연결해줌.
+    즉, queryFn에서 queryKey에 접근하여 동일한 코드의 중복을 막을 수 있다.
+
   enabled :
     true - 요청o, false - 요청x
     초기에는 검색어가 undefined로 아무런 events 보여주지 않는다.
@@ -35,8 +39,8 @@ export default function FindEventSection() {
   const [searchTerm, setSearchTerm] = useState();
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['events', { search: searchTerm }],
-    queryFn: ({ signal }) => fetchEvents({ signal, searchTerm }),
+    queryKey: ['events', { searchTerm: searchTerm }],
+    queryFn: ({ signal, queryKey }) => fetchEvents({ signal, ...queryKey[1] }), // ...queryKey[1] = {searchTerm: searchTerm}에 해당함.
     enabled: searchTerm !== undefined,
   });
 
